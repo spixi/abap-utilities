@@ -1,0 +1,64 @@
+*<SCRIPT:PERSISTENT>
+PROGRAM z15ca_rstpda_script_skip_a_chk.
+
+*<SCRIPT:HEADER>
+*<SCRIPTNAME>Z15CA_RSTPDA_SCRIPT_SKIP_A_CHK</SCRIPTNAME>
+*<SCRIPT_CLASS>LCL_DEBUGGER_SCRIPT</SCRIPT_CLASS>
+*<SCRIPT_COMMENT>Debugger Skript: Default Template</SCRIPT_COMMENT>
+*<BP_REACHED>X</BP_REACHED>
+
+*</SCRIPT:HEADER>
+
+*<SCRIPT:PRESETTINGS>
+*<BP>
+*<FLAGACTIVE>X</FLAGACTIVE>
+*<KIND>1 </KIND>
+*<STATEMENTSTA>AUTHORITY-CHECK</STATEMENTSTA>
+*</BP>
+
+*</SCRIPT:PRESETTINGS>
+
+*<SCRIPT:SCRIPT_CLASS>
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script DEFINITION INHERITING FROM  cl_tpda_script_class_super.
+
+  PUBLIC SECTION.
+    METHODS: script REDEFINITION.
+
+ENDCLASS.                    "lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script IMPLEMENTATION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script IMPLEMENTATION.
+
+  METHOD script.
+*& 19.10.2016, Marius Spix, A11088D, Erstellung
+*&
+*& Debugging-Script: Berechtigungsprüfung überspringen
+
+    TRY.
+        "Breakpoint überspringen (Trigger: Breakpoint auf AUTHORITY-CHECK)
+        debugger_controller->debug_step(
+          cl_tpda_script_debugger_ctrl=>debug_step_over
+        ).
+
+        "SY-SUBRC auf 0 setzen
+        cl_tpda_script_data_descr=>change_value(
+            p_varname   = 'SY-SUBRC'
+            p_new_value = '0'
+        ).
+
+      CATCH cx_tpda ##no_handler.
+    ENDTRY.
+  ENDMETHOD.                    "script
+
+ENDCLASS.                    "lcl_debugger_script IMPLEMENTATION
+*</SCRIPT:SCRIPT_CLASS>
+
+*</SCRIPT:PERSISTENT>
